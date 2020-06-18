@@ -1,2 +1,6 @@
 print("test")
 print("Vidar")
+print("   /")
+print("  /")
+print(" /")
+print("/")
