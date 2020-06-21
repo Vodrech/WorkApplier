@@ -2,6 +2,7 @@ from SeleniumObject import SeleniumObject
 from selenium.webdriver.common.keys import Keys
 import main
 import time
+import Database.ManagerDB as db
 
 
 class ElementFetcher:
@@ -21,8 +22,11 @@ class ElementFetcher:
 
         time.sleep(2)
 
-    listYEE = main.get_workplace_webpage()
-    SeleniumObject(listYEE[0], "Testare", "Stockholms Län")
-    time.sleep(2)
+
+    DB_Object = db.DB()
+    DB_Object.check_if_file_exist()
+
+
+
 
 

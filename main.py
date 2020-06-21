@@ -85,3 +85,18 @@ def get_workplace_webpage():  # Gets the work recruiter web-page.
                                             workplace_webpages.append(link)
 
     return workplace_webpages
+
+
+def remove_cookie(webpage_URL):
+
+    cookie_dictionary = {
+        "cookie"
+    }
+
+    sourcePage2 = requests.get(webpage_URL).text
+    sourceCode2 = BeautifulSoup(sourcePage2, 'lxml')
+
+    sourceCode2.find_all('div', {'class': cookie_dictionary.pop()})
+
+
+remove_cookie('https://jobs.academicwork.se/annons/javautvecklare-till-seb-i-stockholm/15042389?utm_source=Indeed&utm_medium=cpc&utm_campaign=Indeed')
