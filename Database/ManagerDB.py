@@ -3,6 +3,11 @@ import Settings.settings as config
 from os import path
 import os
 
+"""
+
+Handles the Database File
+
+"""
 
 class DB:
 
