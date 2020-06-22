@@ -9,8 +9,8 @@ class DB:
     def __init__(self):
         self.file_name = config.settings_dictionary.get('database_name')
         self.pathway = config.settings_dictionary.get('database_path')
-        self.connection = "FFF"
 
+    # Checks if the database file exist
     def check_if_file_exist(self):
 
         # Nested Function
