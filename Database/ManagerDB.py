@@ -9,6 +9,7 @@ Handles the Database File
 
 """
 
+
 class DB:
 
     def __init__(self):

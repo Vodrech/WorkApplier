@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 import main
 import time
 import Database.ManagerDB as db
+import Database.ManagerSQLITE as SQL
 
 
 class ElementFetcher:
@@ -25,6 +26,7 @@ class ElementFetcher:
 
     DB_Object = db.DB()
     DB_Object.check_if_file_exist()
+    SQL_Object = SQL.SQL()
 
 
 

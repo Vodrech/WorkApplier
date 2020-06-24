@@ -12,5 +12,5 @@ Prerequisites:
 settings_dictionary = {
     'database_name': 'WorkPlaces Applied',  # String
     'database_path': 'C:\\Temp\\',   # Fails when creating directory cause it should only be named C:\\Temp
-    'job_title': '{"Testare", "Utvecklare" , "Testautomatiserare"}'  # Dict
+    'job_title': ('Testare', 'Utvecklare')  # List
 }
