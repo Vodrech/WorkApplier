@@ -25,7 +25,9 @@ The project is devided between 4 different section with a entrypoint through the
 > Dataflow:
 ```
 The dataflow is how the project is processing data to function correctly.
-Fetching data from worksite (webscraping) --> Saves the worksites to the DB --> Applies to the work recruitment --> Change attributes to "Applied" --> Wait for Response -->  
+
+
+Fetching data from worksite (webscraping) --> Saves the worksites to the DB --> Applies to the work recruitment --> Change attributes to "Applied" --> Wait for Response --> Respond to Response --> END 
 ```
 
 ## Development setup
