@@ -2,6 +2,7 @@ import sqlite3
 import Settings.settings as config
 from os import path
 import os
+import logging
 
 """
 

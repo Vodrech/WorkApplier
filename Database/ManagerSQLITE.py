@@ -11,6 +11,8 @@ import Database.ManagerDB as DB
 
 class SQL:
 
+    print('SQL Imported')
+
     def __init__(self):
         self.database = DB.DB()
         self.connection_string = self.database.pathway + self.database.file_name + '.db'

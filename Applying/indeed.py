@@ -2,6 +2,7 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 # Folder Imports
 import Settings.settings as settings
 
@@ -14,86 +15,80 @@ import Settings.settings as settings
 
 class Indeed:
 
+    print('Indeed Imported')
+
     def __init__(self):
-        self.job_title = settings.settings_dictionary.get('job_title')
+        self.job_title_filter = settings.settings_dictionary.get('job_title_filter')
+        self.search_title = settings.settings_dictionary.get('indeed_search_title')
+        self.search_location = settings.settings_dictionary.get('indeed_search_location')
+        self.search_published = settings.settings_dictionary.get('indeed_search_published')
         self.applies = self.__get_workplace_webpage()
 
     # Method one
     def __get_active_jobs(self):
 
         """
-            Fetches data from a Web page and returns the id on the <div> elements that is being searched after.
-            :return: <div> ids
+            @Method
+            > Fetches data from a Web page and returns the id on the <div> elements that is being searched after.
+            > :return: indeed apply page for each job
+
+            @DataFlow
+            > Fetch <div> with class = 'jobsearch....'
+            > Looks After the H2 Element within the <div> tag
+            > Looks for an element with the attributes 'title' and 'href'
+            > Saves the href to a list
+            > Returns a LIST
+
         """
 
         appliers = []
-        source_page = requests.get('https://se.indeed.com/Testare-jobb-i-Stockholms-L%C3%A4n').text #TODO: Fix so it isn't hardcoded, it should adapt after the job_tilte that is given in the settings.py
+        URL = 'https://se.indeed.com/jobb?q=_&l='.replace('_', self.search_title).__add__(self.search_location).__add__('&fromage=').__add__(self.search_published)
+        source_page = requests.get(URL).text  # https://se.indeed.com/Testare-jobb-i-Stockholms-L%C3%A4n
         source_code = BeautifulSoup(source_page, 'lxml')
 
         # Fetches the html elements <div>
         for jobs in source_code.find_all('div', 'jobsearch-SerpJobCard unifiedRow row result'):
 
+            # Loops through each element within the <div>
             for elements in jobs.contents:
 
-                for jobTitle in self.job_title:
-                    if hasattr(elements, 'text'):
-                        if str(elements.text).__contains__(jobTitle):
+                    if hasattr(elements, 'name'):
+                        if elements.name == 'h2':
+                            if hasattr(elements, 'contents'):
 
-                            job_id = jobs.attrs.get('id')  # Gets the job id so it can parse it to get_applies
-                            appliers.append(job_id)
+                                # Loops through the <h2> element and looks for <a> tag
+                                for elements2 in elements.contents:
+                                    if hasattr(elements2, 'attrs'):
 
-        print('Method:', self.__get_active_jobs.__name__, '\nreturned a list of : ', len(appliers))
+                                                # Checks so its the correct element <a> with the attributes 'href' & 'title'
+                                                if elements2.attrs.__contains__('title') and elements2.attrs.__contains__('href'):
+
+                                                    # Checks if the title contains the search terms given in the settings.py
+                                                    for jobTitle in self.job_title_filter:
+                                                        if elements2.attrs.get('title').casefold().__contains__(jobTitle.casefold()):
+
+                                                            job_link = 'https://se.indeed.com' + elements2.attrs.get('href')
+                                                            appliers.append(job_link)
+
+        print('\nMethod:', self.__get_active_jobs.__name__, '\nreturned a list of : ', len(appliers))
         return appliers
 
-    # Method two
-    def __get_applies(self):
-
-        """
-            Uses the first method: get_active_jobs and fetches the elements through their ID's
-            :return: Indeeds apply page so workplaces pages can be fetched.
-        """
-
-        source_page = requests.get('https://se.indeed.com/Testare-jobb-i-Stockholms-L%C3%A4n').text #TODO: Fix so it isn't hardcoded, it should adapt after the job_tilte that is given in the settings.py
-        source_code = BeautifulSoup(source_page, 'lxml')
-
-        job_list = self.__get_active_jobs()
-        job_links = []
-
-        # Loops through each job and gets the apply page.
-        for job in job_list:
-
-            for selectData in source_code.find_all('div', {'id': job}):  # Finds each div with id element equal to 'job'
-                if hasattr(selectData, 'contents'):
-
-                    for s in selectData.contents:
-                        if hasattr(s, 'attrs'):
-
-                            attributes = dict(s.attrs)
-                            if 'class' in attributes.keys():
-                                if 'title' in attributes.get('class'):
-
-                                    for a in s.contents:
-                                        if hasattr(a, 'attrs'):
-
-                                            attributes2 = dict(a.attrs)
-                                            if 'href' in attributes2.keys():
-
-                                                link = "https://se.indeed.com" + attributes2.get('href')
-                                                job_links.append(link)
-
-        print('Method:', self.__get_applies.__name__, '\nfetched:', len(job_links), '/', len(job_list))
-
-        return job_links
-
-    # Method three
     def __get_workplace_webpage(self):
 
         """
-            Uses the Method two: get_applies to fetch the indeed page to able to get the workplace web page
-            :return: A list of web pages that is the the workplaces
+            @Method
+            > Uses the __get_active_jobs() to fetch the job applying pages
+            :return: A list of job applying pages (URLS)
+
+            @DataFlow
+            > Fetches the URL's from __get_active_jobs()
+            > Fetches the site and looks for the <div> with class='icl-u-...'
+            > Looks after element with the correct attributes
+            > Saves a number of dicts to a list
+            > Returns a LIST
         """
 
-        links = self.__get_applies()
+        links = self.__get_active_jobs()
         workplace_webpages = []
 
         for link in links:
@@ -101,25 +96,35 @@ class Indeed:
             source_code = BeautifulSoup(source_page, 'lxml')
 
             for webpage in source_code.find_all('div', 'icl-u-lg-hide'):
-                if hasattr(webpage, 'attrs'):
+                if hasattr(webpage, 'string'):
+                    if str(webpage.string).__contains__('Ansök på nästa hemsida'):
 
-                    attributes = dict(webpage.attrs)
-                    if 'class' in attributes.keys():
+                        if hasattr(webpage, 'contents'):
+                            for content in webpage.contents:
 
-                        if attributes.get('class').__len__() == 1:
-                            if hasattr(webpage, 'contents'):
+                                if hasattr(content, 'attrs'):
+                                    if content.attrs.__contains__('href'):
+                                        web_link = content.attrs.get('href')
 
-                                for content in webpage.contents:
-                                    if hasattr(content, 'attrs'):
+                                        information = {
+                                            'workplace': source_code.find_all('div', 'icl-u-lg-mr--sm icl-u-xs-mr--xs')[0].text,
+                                            'worktitle': str(source_code.find_all('h3','icl-u-xs-mb--xs icl-u-xs-mt--none jobsearch-JobInfoHeader-title')[0].contents[0]),
+                                            'link': web_link
+                                        }
+                                        workplace_webpages.append(information)
 
-                                        attributes2 = dict(content.attrs)
-                                        if 'href' in attributes2.keys():
-                                                link = attributes2.get('href')
-                                                information = {
-                                                    'workplace': source_code.find_all('div', 'icl-u-lg-mr--sm icl-u-xs-mr--xs')[0].text,
-                                                    'worktitle': str(source_code.find_all('h3', 'icl-u-xs-mb--xs icl-u-xs-mt--none jobsearch-JobInfoHeader-title')[0].contents[0]),
-                                                    'link': link
-                                                }
-                                                workplace_webpages.append(information)
+                    else:
+                        if hasattr(webpage, 'string'):
+                            if str(webpage.string).__contains__('Ansök'):
+
+                                web_link = link
+                                information = {
+                                    'workplace': source_code.find_all('div', 'icl-u-lg-mr--sm icl-u-xs-mr--xs')[0].text,
+                                    'worktitle': str(source_code.find_all('h3','icl-u-xs-mb--xs icl-u-xs-mt--none jobsearch-JobInfoHeader-title')[0].contents[0]),
+                                    'link': web_link
+                                }
+                                workplace_webpages.append(information)
+
+        print('\nMethod:', self.__get_active_jobs.__name__, '\n found:', len(workplace_webpages), '/', len(links))
 
         return workplace_webpages

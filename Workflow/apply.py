@@ -4,29 +4,36 @@ from Database.ManagerSQLITE import SQL
 
 class ApplyingInterface:
 
-    indeed = Indeed()
-    sql = SQL()
-    saved_jobs = sql.select_all()
-    exists = True
+    print('ApplyingInterface Imported')
 
-    saved_jobs = sql.select_all()
+    # TODO: Change so it can have other object than Indeed
+    def __init__(self):
+        self.indeed = Indeed()
+        self.sql = SQL()
+        self.saved_jobs = self.sql.select_all()
+        self.exists = True
 
-    for saveWorkPlace in indeed.applies:
+    def apply_indeed(self):
 
-        for job in saved_jobs:
+        print('saving to database')
 
-            if job.__contains__(saveWorkPlace.get('workplace')) and job.__contains__(saveWorkPlace.get('worktitle')):
-                exists = False
+        for saveWorkPlace in self.indeed.applies:
 
-        if exists is True:
+            for job in self.saved_jobs:
 
-            workplace = saveWorkPlace.get('workplace')
-            worktitle = saveWorkPlace.get('worktitle')
-            link = saveWorkPlace.get('link')
-            sql.save_workplace(workplace, worktitle, link)
+                if job.__contains__(saveWorkPlace.get('workplace')) and job.__contains__(saveWorkPlace.get('worktitle')):
+                    self.exists = False
 
-        else:
-            print('Job did already exist in the database')
+            if self.exists is True:
+
+                workplace = saveWorkPlace.get('workplace')
+                worktitle = saveWorkPlace.get('worktitle')
+                link = saveWorkPlace.get('link')
+                print('Saving to DB: ', workplace, '-', worktitle)
+                self.sql.save_workplace(workplace, worktitle, link)
+
+            else:
+                print('\nJob Already exist: ', saveWorkPlace.get('workplace'), '-', saveWorkPlace.get('worktitle'))
 
 
 
