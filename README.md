@@ -85,6 +85,6 @@ Currently we are not open to contributors unless you are a student and is lookin
 
 
 <!-- Markdown link & img dfn's -->
-[npm-image]: https://img.shields.io/badge/version-v0.5-brightgreen
+[npm-image]: https://img.shields.io/badge/version-v0.6-brightgreen
 [npm-url]: https://npmjs.org/package/datadog-metrics
 [python-version]: https://img.shields.io/badge/python-%2B3.7-blue
