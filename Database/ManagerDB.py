@@ -1,8 +1,7 @@
-import sqlite3
 import Settings.settings as config
 from os import path
 import os
-import logging
+
 
 """
 
@@ -15,7 +14,8 @@ class DB:
 
     def __init__(self):
         self.file_name = config.settings_dictionary.get('database_name')
-        self.pathway = config.settings_dictionary.get('database_path')
+        self.pathway = config.settings_dictionary.get('main_folder') + config.settings_dictionary.get('db_folder')
+        self.check_if_file_exist()
 
     # Checks if the database file exist
     def check_if_file_exist(self):
@@ -24,11 +24,11 @@ class DB:
         def creating_database_file():
 
             try:
-                open(self.pathway + self.file_name + '.db', 'w+')
+                open(self.pathway + '\\' + self.file_name + '.db', 'w+')
                 return 1
 
             except FileExistsError:
-                FileExistsError(" File: " + self.file_name + " couldn't be created, cause already exist!")
+                raise FileExistsError(" File: " + self.file_name + " couldn't be created, cause already exist!")
                 return 0
 
         # Nested Function
@@ -40,14 +40,14 @@ class DB:
                 creating_database_file()
                 return 1
             except NotADirectoryError:
-                NotADirectoryError('The Directory: ' + self.pathway + "couldn't be created..."
+                raise NotADirectoryError('The Directory: ' + self.pathway + "couldn't be created..."
                                                                       "Check so the settings.py is correctly setup")
                 return 0
 
         # Main Function
         if path.isdir(self.pathway):
 
-            if not path.exists(self.pathway + self.file_name):  # Creates file if does not exist.
+            if not path.exists(self.pathway + '\\' + self.file_name + '.db'):  # Creates file if does not exist.
 
                 def creating_database_file():
 
@@ -56,7 +56,7 @@ class DB:
                         return 1
 
                     except FileExistsError:
-                        FileExistsError(" File: " + self.file_name + " couldn't be created, cause already exist!")
+                        raise FileExistsError(" File: " + self.file_name + " couldn't be created, cause already exist!")
                         return 0
 
                 return creating_database_file()

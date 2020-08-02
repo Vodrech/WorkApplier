@@ -4,5 +4,4 @@ import logging.config
 
 if __name__=='__main__':
     f = apply.ApplyingInterface()
-    f.apply_indeed()
-
+    f.apply_arbetsformedlningen()
