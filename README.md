@@ -6,7 +6,7 @@
 
 ## Usage example
 
-The project is devided between 4 different section with a entrypoint through the main.py file.
+The project is devided between 7 different section with a entrypoint through the main.py file.
 
 > Project Structure:
 ```
@@ -18,6 +18,12 @@ The project is devided between 4 different section with a entrypoint through the
 │   └─── Handles all the Database Functionality.
 ├───Settings
 │   └─── Settings over whole project
+├───Testing
+│   └─── Consists of all the testing within the project. (Not Implented YET)
+├───Visualization
+│   └─── Handles data outside of the window, such as writing to excell or other ways of visualize data. (NOT Implented YET)
+├───Window
+│   └─── Handles all the functionality for the GUI (Window)
 ├───Workflow
 │   └─── Handles the main Functionality for the applying process.
 └
@@ -26,7 +32,7 @@ The project is devided between 4 different section with a entrypoint through the
 ```
 The dataflow is how the project is processing data to function correctly.
 
-
+The Optimal Idea how it will work:
 Fetching data from worksite (webscraping) --> Saves the worksites to the DB --> Applies to the work recruitment --> Change attributes to "Applied" --> Wait for Response --> Respond to Response --> END 
 ```
 
@@ -40,6 +46,7 @@ pip install requests https://github.com/psf/requests
 pip install lxml
 pip install BeautifulSoup4
 pip install sqlite3
+pip install tkinter
 ```
 Checkout more information about each module:
 > requests: https://github.com/psf/requests
@@ -50,12 +57,17 @@ Checkout more information about each module:
 
 > sqlite3: https://docs.python.org/2/library/sqlite3.html
 
-## Release History
+> tkinter: https://docs.python.org/3/library/tk.html
 
+## Release History
+* 0.6
+    * ADD: Window functionality
+    * Mod: Modified Settings
+    * Add: Overall Error Handling
 * 0.5
     * ADD: Applying functionality
 * 0.4
-    * ADD: Website data fetching functionality. 
+    * ADD: Website data fetching functionality
 * 0.3
     * ADD: Database functionality
 * 0.2
