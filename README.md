@@ -4,7 +4,7 @@
 [![Python Version][python-version]][npm-url]
 [![NPM Version][npm-image]][npm-url]
 
-![Github Logo](https://github.com/[Vodrech]/[WorkApplier]/blob/master/logo.png?raw=true)
+![Github Logo](https://github.com/Vodrech/WorkApplier/blob/master/logo.png?raw=true)
 
 ## Usage example
 
