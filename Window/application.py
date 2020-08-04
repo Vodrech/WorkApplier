@@ -1,19 +1,23 @@
 
-
 """
     TODO: Fix so that when the save button is pressed all the settings are saved, currently no values are being
     generated because its value is taken when the object is created.
 """
 
-
-from Settings import settings
-from Settings import save
+import selenium
 import tkinter as tk
+import Workflow.apply as aply
+
+from selenium import webdriver
+from Settings import save
 from tkinter import ttk
 from Settings import settings
+from Database import ManagerSQLITE
 
 
 class Application(tk.Frame):
+
+    print('Application Imported')
 
     def __init__(self, master=None):
         super().__init__(master)
@@ -23,23 +27,133 @@ class Application(tk.Frame):
 
     def create_widgets(self):
 
-        root.minsize(width=700, height=500)
-        root.maxsize(width=700, height=500)
-        self.title = root.title('WorkApplier')
+        self.master.minsize(width=700, height=500)
+        self.master.maxsize(width=700, height=500)
+        self.title = self.master.title('WorkApplier')
 
         # Notebook
-        tabControl = ttk.Notebook(root)
+        tabControl = ttk.Notebook(self.master)
 
         def create_main_tab():
+
+            sql = ManagerSQLITE.SQL()
 
             main_tab = ttk.Frame(tabControl)
             tabControl.add(main_tab, text='Main')
             tabControl.pack(expand=1, fill="both")
 
-            # Container
-            container = tk.Frame(main_tab, borderwidth=1)
-            container.pack(side='left', fill='y')
-            ttk.Label(container, text='Program Settings', width=40, font=0.1).grid(row=0, column=0)    # Headline
+            # Top Container
+            top_container = tk.Frame(main_tab, borderwidth=1)
+            top_container.pack(side='top', fill='x')
+
+            # ScrollBarY Container
+            containerScrollbarY = tk.Frame(main_tab, borderwidth=1)
+            containerScrollbarY.pack(side='left', fill='y')
+
+            # TreeView Container
+            container = tk.Frame(main_tab, borderwidth=1, background='grey')
+            container.pack(side='left', fill='both', pady=5, padx=5)
+
+            # Table of Content
+            Tree = ttk.Treeview(container)
+            Tree.pack(side='left', fill='y')
+
+            def display_jobs():
+
+                jobs = sql.fetch_all_data_two()
+                index = iid = 1
+
+                if Tree.exists(str(index)):
+
+                    pos = 1
+                    boolValue = True
+
+                    while boolValue:
+
+                        boolValue = Tree.next(str(pos)) is not ""
+                        Tree.delete(str(pos))
+                        pos += 1
+
+                for row in jobs:
+
+                    values = [index]
+                    for y in list(row):
+
+                        values.append(y)
+
+                    Tree.insert("", index, iid, values=values)
+                    index = iid = index + 1
+
+            display_jobs()  # So the content is displayed when starting the application
+
+            def delete_job():
+                selected_row = Tree.focus()
+                data = Tree.item(selected_row).get('values')
+                job_id = data[1]
+
+                sql.delete_data_two_job_id(job_id)
+
+            def delete_all_jobs():
+
+                sql.delete_data_two_all_jobs()
+
+            def apply():
+
+                selected_row = Tree.focus()
+                data = Tree.item(selected_row).get('values')
+                url = data[7]
+                driver = webdriver.Chrome('C:\\Users\\Vidar\\PycharmProjects\\WorkApplier\\Settings\\chromedriver.exe') # TODO: FIX Better solution
+                driver.get(url)
+
+            def seek_jobs():
+                arbetsformedlningen = aply.ApplyingInterface()
+                arbetsformedlningen.apply_arbetsformedlningen()
+                display_jobs()
+
+            # ScrollBarX Container
+            containerScrollbarX = tk.Frame(main_tab, borderwidth=1)
+            containerScrollbarX.pack(side='bottom', fill='x')
+            button = ttk.Button(top_container, text='Seek Jobs', width=50, command=seek_jobs)
+            button.pack(pady=15)
+
+            button_delete_all = ttk.Button(top_container, text='DELETE ALL', width=10, command=delete_all_jobs)
+            button_delete_all.pack(side='right')
+
+            button_delete = ttk.Button(top_container, text='DELETE', width=10, command=delete_job)
+            button_delete.pack(side='right')
+
+            button_update = ttk.Button(top_container, text='UPDATE TABLE', width=20, command=display_jobs)
+            button_update.pack(side='right')
+
+            button_apply = ttk.Button(top_container, text='APPLY', width=10, command=apply)
+            button_apply.pack(side='right')
+
+            # Scrollbar
+            scrollBarY = ttk.Scrollbar(containerScrollbarY, orient='vertical', command=Tree.yview)
+            scrollBarY.pack(fill='y', side='left')
+
+            scrollBarX = ttk.Scrollbar(containerScrollbarX, orient='horizontal', command=Tree.xview)
+            scrollBarX.pack(fill='x', side='bottom')
+
+            Tree.configure(yscrollcommand=scrollBarY.set, xscrollcommand=scrollBarX.set)
+            Tree["columns"] = ["row", "job_id", "occupation", "company_name", "keywords", "publication_date", "last_publication_date", "url"]
+            Tree.column('row', width=30)
+            Tree.column('job_id', width=60)
+            Tree.column('occupation', width=110)
+            Tree.column('company_name', width=110)
+            Tree.column('keywords', width=110)
+            Tree.column('publication_date', width=110)
+            Tree.column('last_publication_date', width=140)
+
+            Tree["show"] = "headings"
+            Tree.heading("row", text="row")
+            Tree.heading("job_id", text="job_id")
+            Tree.heading("occupation", text="occupation")
+            Tree.heading("company_name", text="company_name")
+            Tree.heading("keywords", text="keywords")
+            Tree.heading("publication_date", text="publication_date")
+            Tree.heading("last_publication_date", text="last_publication_date")
+            Tree.heading("url", text="url")
 
         def create_settings_tab():
 
@@ -216,15 +330,16 @@ class Application(tk.Frame):
             # Location Enabled/Disabled
             location_check.setvar('location_checkbox', settings.settings_search_dictionary.get('radius_active'))
 
-            homePos = settings.settings_search_dictionary.get('radius_home').split(',')
+            if settings.settings_search_dictionary.get('radius_active'):
+                homePos = settings.settings_search_dictionary.get('radius_home').split(',')
 
-            if len(homePos) <= 2:
-                homeLat = homePos[0]
-                homeLong = homePos[1]
-                latitude_entry.insert(0, homeLat)
-                longitude_entry.insert(0, homeLong)
+                if len(homePos) <= 2:
+                    homeLat = homePos[0]
+                    homeLong = homePos[1]
+                    latitude_entry.insert(0, homeLat)
+                    longitude_entry.insert(0, homeLong)
 
-            radius_entry.insert(0, settings.settings_search_dictionary.get('radius_acceptable'))
+                radius_entry.insert(0, settings.settings_search_dictionary.get('radius_acceptable'))
 
             def location_setting():
 
@@ -324,10 +439,5 @@ class Application(tk.Frame):
             save_button = ttk.Button(container, text='Save Settings', width=20, command=save_settings)
             save_button.grid(row=13, column=0, ipady=3, pady=235, ipadx=50, padx='50', sticky='W')
 
-        create_settings_tab()
         create_main_tab()
-
-
-root = tk.Tk()
-app = Application(master=root)
-app.mainloop()
+        create_settings_tab()

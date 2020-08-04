@@ -1,8 +1,8 @@
 import Settings.settings as settings
 import json as json
 import time
-
 import requests
+import logging
 
 # TODO: Sometimes the API dosn't return a JobID Cause UnAuthorized, fix or solve if it isn't solved in the future
 
@@ -19,6 +19,7 @@ class Arbetsformedlingen:
     def __init__(self):
         self.base_url = 'https://jobsearch.api.jobtechdev.se/search?'
         self.base_taxonomy_url = 'https://taxonomy.api.jobtechdev.se/v1/taxonomy/specific/concepts/ssyk?'
+        self.logger = logging.getLogger('applying')
 
     def __get_taxonomy_object(self):
 
@@ -55,6 +56,8 @@ class Arbetsformedlingen:
                         id = json.loads(source_page.text)[0].get('taxonomy/id')
                         occupation_roles.append(id)
                         break
+
+        self.logger.info('Occupation_roles found:' + str(occupation_roles))
 
         return occupation_roles
 
@@ -110,7 +113,7 @@ class Arbetsformedlingen:
                 raise Exception('The "radius_active" were "True" but value were entered wrong. Example(59.434,18.242)')
 
         if settings.settings_search_dictionary.get('limit_active'):
-            if settings.settings_search_dictionary.get('limit_value') > 100:
+            if int(settings.settings_search_dictionary.get('limit_value')) > 100:
                 raise Exception('The limit can only be 100 or less')
             elif type(settings.settings_search_dictionary.get('limit_value')) == float:
                 raise Exception('The limit can only be an integer, eg ( 1, 50, 100) not (1.0, 50.5, 100.58)')

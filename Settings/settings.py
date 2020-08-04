@@ -12,6 +12,8 @@ Prerequisites:
 
 """
 
+print('Settings Imported')
+
 # Settings for program functionality
 settings_dictionary = {
 
@@ -20,7 +22,7 @@ settings_dictionary = {
     'api_folder': '\\API',                  # API Folder
     'database_name': 'WorkApplier DB',  # Database Name
     'encoding': 'utf8',                     # Encoding for the return value after work available result
-    'api_key': '',
+    'api_key': 'Yid3PVx4YzhceGExXHgwNXpceGZhXHhjZFx4MThceGYwRlxuQCpceGQ0XHhjYVx4MTZqTlx4MTgn',
 
     # Deprecated Settings
     'job_title_filter': ('',),  # Tuple , special search after title
@@ -35,7 +37,7 @@ settings_search_dictionary = {
 
     # Occupations, entered as a list (SSYK)
     'ssyk_active': False,
-    'ssyk_value': [],
+    'ssyk_value': '',
 
     # Driving license
     'driving_license_active': False,
@@ -54,12 +56,12 @@ settings_search_dictionary = {
 
     # Specific position range from home to work, (latitude,longitude)
     'radius_active': False,
-    'radius_home': '',
+    'radius_home': ',',
     'radius_acceptable': '',
 
     # Description keywords searcher , If specific keywords in the job description
     'keywords_active': False,
-    'keywords_value': [],
+    'keywords_value': [''],
 
     # Number of jobs that the function is going to fetch, standard 10
     'limit_active': False,

@@ -12,6 +12,8 @@ Handles the Database File
 
 class DB:
 
+    print('Manager DB Imported')
+
     def __init__(self):
         self.file_name = config.settings_dictionary.get('database_name')
         self.pathway = config.settings_dictionary.get('main_folder') + config.settings_dictionary.get('db_folder')

@@ -10,9 +10,11 @@ from Settings import settings
     The main site is Arbetsformedlning.se but further sites may be added in the further if needed.
 
 """
+
+
 class ApplyingInterface:
 
-    print('ApplyingInterface Imported')
+    print('Workflow Imported')
 
     def __init__(self):
         self.sql = SQL()    # Creates the SQL object so SQL injections can be made
@@ -80,7 +82,6 @@ class ApplyingInterface:
 
             return 0
 
-
         # Nested Function, checks if the description contains any of keywords in the settings.py
         def keywords_description(data):
 
@@ -98,8 +99,6 @@ class ApplyingInterface:
                         keyword_dict[keyword] = False
 
                 return keyword_dict
-            else:
-                raise Exception('The object in the fetch_data did not have the field "description"')
 
         # Nested Function , gets all the necessary data to save to database
         def get_all_necessary_data(data):
@@ -142,13 +141,13 @@ class ApplyingInterface:
 
             # Fetching publication_date
             if 'publication_date' not in data_dict.keys():
-                data_dict['publication_date'] = data.get('publication_date')
+                data_dict['publication_date'] = data.get('publication_date').split('T')[0]
             else:
                 raise Exception('Dict already has an element named "publication_date"')
 
             # Fetching last_publication_date
             if 'last_publication_date' not in data_dict.keys():
-                data_dict['last_publication_date'] = data.get('last_publication_date')
+                data_dict['last_publication_date'] = data.get('last_publication_date').split('T')[0]
             else:
                 raise Exception('Dict already has an element named "last_publication_date"')
 

@@ -13,9 +13,8 @@ import Settings.settings as settings
 """
 
 
+@DeprecationWarning
 class Indeed:
-
-    print('Indeed Imported')
 
     def __init__(self):
         self.job_title_filter = settings.settings_dictionary.get('job_title_filter')

@@ -13,6 +13,7 @@ import os
 
 """
 
+
 class SaveSettings:
 
     def __init__(self, object, value):
@@ -64,8 +65,10 @@ class SaveSettings:
                             file.writelines(content)
 
                         elif type(self.value) == str:
-
-                            newLine = ("    '" + self.object + "'" + ":" + " " + "'" + self.value + "'" + ",\n")
+                            if self.value.isdecimal():
+                                newLine = ("    '" + self.object + "'" + ":" + " " + self.value + ",\n")
+                            else:
+                                newLine = ("    '" + self.object + "'" + ":" + " " + "'" + self.value + "'" + ",\n")
                             content[position] = newLine
                             file.writelines(content)
 
@@ -86,7 +89,10 @@ class SaveSettings:
                                 if type(x) == int:
                                     newLine += str(x)
                                 elif type(x) == str:
-                                    newLine += "'" + x + "'"
+                                    if x.isdecimal():
+                                        newLine += str(x)
+                                    else:
+                                        newLine += "'" + x + "'"
                                 else:
                                     Exception('Can not define the lists datatype, please check error log!')
 

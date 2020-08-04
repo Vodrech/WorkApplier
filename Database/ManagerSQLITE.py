@@ -1,5 +1,6 @@
 import sqlite3 as sql
 import Database.ManagerDB as DB
+import datetime
 
 """
 
@@ -11,13 +12,14 @@ import Database.ManagerDB as DB
 
 class SQL:
 
-    print('SQL Imported')
+    print('Manger SQLite Imported')
 
     def __init__(self):
         self.database = DB.DB()
         self.connection_string = self.database.pathway + '\\' + self.database.file_name + '.db'
         self.table_existence = self.__create_table()
         self.arbetsformedlingen_existence = self.__create_arbetsformedlningen_table()
+        self.delete_expired_jobs_data_two()
 
     def create_connection(self):
 
@@ -92,6 +94,62 @@ class SQL:
 
         except Exception as e:
             raise Exception('Could not save workplace, please check error log', e)
+        finally:
+            connection.close()
+
+    def fetch_all_data_two(self):
+
+        injection = """SELECT * FROM data_two"""
+
+        try:
+            connection = self.create_connection()
+            data = connection.cursor().execute(injection).fetchall()
+            return data
+
+        except Exception as e:
+            raise Exception('Could not get all data, please check error log', e)
+        finally:
+            connection.close()
+
+    def delete_expired_jobs_data_two(self): # TODO: FIX
+
+        injection = ("""DELETE FROM data_two WHERE last_publication_date < %s""" % datetime.date.today())
+
+        try:
+            connection = self.create_connection()
+            data = connection.cursor().execute(injection).fetchall()
+            return data
+
+        except Exception as e:
+            raise Exception('Could not get all data, please check error log', e)
+        finally:
+            connection.close()
+
+    def delete_data_two_job_id(self, id):
+
+        injection = ("""DELETE FROM data_two WHERE id == '%s' """ % id)
+
+        try:
+            connection = self.create_connection()
+            connection.cursor().execute(injection)
+            connection.commit()
+
+        except Exception as e:
+            raise Exception('Could not update the applying to the workplace, please check error log', e)
+        finally:
+            connection.close()
+
+    def delete_data_two_all_jobs(self):
+
+        injection = """DELETE FROM data_two;"""
+
+        try:
+            connection = self.create_connection()
+            connection.cursor().execute(injection)
+            connection.commit()
+
+        except Exception as e:
+            raise Exception('Could not update the applying to the workplace, please check error log', e)
         finally:
             connection.close()
 
