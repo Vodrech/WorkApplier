@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 
 # Folder Imports
-import Settings.settings as settings
+import Settings.SpecialSearchSettings as settings
 
 """
 
@@ -17,10 +17,10 @@ import Settings.settings as settings
 class Indeed:
 
     def __init__(self):
-        self.job_title_filter = settings.settings_dictionary.get('job_title_filter')
-        self.search_title = settings.settings_dictionary.get('indeed_search_title')
-        self.search_location = settings.settings_dictionary.get('indeed_search_location')
-        self.search_published = settings.settings_dictionary.get('indeed_search_published')
+        self.job_title_filter = Settings.get_special_search_settings('job_title_filter')
+        self.search_title = Settings.get_special_search_settings('indeed_search_title')
+        self.search_location = Settings.get_special_search_settings('indeed_search_location')
+        self.search_published = Settings.get_special_search_settings('indeed_search_published')
         self.applies = self.__get_workplace_webpage()
 
     # Method one
@@ -62,7 +62,7 @@ class Indeed:
                                                 # Checks so its the correct element <a> with the attributes 'href' & 'title'
                                                 if elements2.attrs.__contains__('title') and elements2.attrs.__contains__('href'):
 
-                                                    # Checks if the title contains the search terms given in the settings.py
+                                                    # Checks if the title contains the search terms given in the TableSpecialSearch.py
                                                     for jobTitle in self.job_title_filter:
                                                         if elements2.attrs.get('title').casefold().__contains__(jobTitle.casefold()):
 

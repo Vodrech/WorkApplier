@@ -1,5 +1,5 @@
 import sqlite3 as sql
-import Database.ManagerDB as DB
+from Database.ManagerDB import DB
 import datetime
 
 """
@@ -15,7 +15,7 @@ class SQL:
     print('Manger SQLite Imported')
 
     def __init__(self):
-        self.database = DB.DB()
+        self.database = DB()
         self.connection_string = self.database.pathway + '\\' + self.database.file_name + '.db'
         self.table_existence = self.__create_table()
         self.arbetsformedlingen_existence = self.__create_arbetsformedlningen_table()

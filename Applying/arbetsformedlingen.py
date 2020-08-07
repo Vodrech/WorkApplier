@@ -1,4 +1,5 @@
-import Settings.settings as settings
+from Settings.ProgramSettings import ProgramConfigurations
+from Settings.SpecialSearchSettings import Settings
 import json as json
 import time
 import requests
@@ -20,6 +21,7 @@ class Arbetsformedlingen:
         self.base_url = 'https://jobsearch.api.jobtechdev.se/search?'
         self.base_taxonomy_url = 'https://taxonomy.api.jobtechdev.se/v1/taxonomy/specific/concepts/ssyk?'
         self.logger = logging.getLogger('applying')
+        self.dataConfigurations = Settings()
 
     def __get_taxonomy_object(self):
 
@@ -37,13 +39,13 @@ class Arbetsformedlingen:
         """
 
         url = self.base_taxonomy_url + 'ssyk-code-2012='    # Hardcoded cause only one object is needed, if more object is needed, make a more adaptive url
-        headers = {'api-key': settings.settings_dictionary.get('api_key')}
+        headers = {'api-key': self.dataConfigurations.get_special_search_settings('api_key')}
         occupation_roles = []
         unAuthorizedCounter = 0
 
-        if settings.settings_search_dictionary.get('ssyk_active') is True:
+        if self.dataConfigurations.get_special_search_settings('ssyk_active') == 1:
 
-            for value in settings.settings_search_dictionary.get('ssyk_value'):
+            for value in self.dataConfigurations.get_special_search_settings('ssyk_value').split(' '):
 
                 while unAuthorizedCounter < 10:     # Tries 10 times to authorize
 
@@ -78,8 +80,8 @@ class Arbetsformedlingen:
 
         url = self.base_url
 
-        # Occupation is enabled in settings.py
-        if settings.settings_search_dictionary.get('ssyk_active') is True:
+        # Occupation is enabled in TableSpecialSearch.py
+        if self.dataConfigurations.get_special_search_settings('ssyk_active'):
             occupation_list = self.__get_taxonomy_object()
 
             if len(occupation_list) > 0:
@@ -94,30 +96,25 @@ class Arbetsformedlingen:
             else:
                 raise Exception('The "ssyk_active" were "True" but no occupation were given')
 
-        # Driving licence is enabled in settings.py
-        if settings.settings_search_dictionary.get('driving_license_active'):
+        # Driving licence is enabled in TableSpecialSearch.py
+        if self.dataConfigurations.get_special_search_settings('driving_license_active'):
             print('WOW')    # FIX
 
-        # Specific position of workplace is enabled in settings.py
-        if settings.settings_search_dictionary.get('radius_active'):
-            homePos = settings.settings_search_dictionary.get('radius_home').split(',')
+        # Specific position of workplace is enabled in TableSpecialSearch.py
+        if self.dataConfigurations.get_special_search_settings('radius_active'):
 
-            if len(homePos) <= 2:
+            homeLat = self.dataConfigurations.get_special_search_settings('radius_home_lat')
+            homeLong = self.dataConfigurations.get_special_search_settings('radius_home_long')
 
-                homeLat = homePos[0]
-                homeLong = homePos[1]
-                url = url + '&' + 'position=' + homeLat + '%2C' + homeLong
+            url = url + '&' + 'position=' + str(homeLat) + '%2C' + str(homeLong)
 
-            else:
-                raise Exception('The "radius_active" were "True" but value were entered wrong. Example(59.434,18.242)')
-
-        if settings.settings_search_dictionary.get('limit_active'):
-            if int(settings.settings_search_dictionary.get('limit_value')) > 100:
+        if self.dataConfigurations.get_special_search_settings('limit_active'):
+            if int(self.dataConfigurations.get_special_search_settings('limit_value')) > 100:
                 raise Exception('The limit can only be 100 or less')
-            elif type(settings.settings_search_dictionary.get('limit_value')) == float:
+            elif type(self.dataConfigurations.get_special_search_settings('limit_value')) == float:
                 raise Exception('The limit can only be an integer, eg ( 1, 50, 100) not (1.0, 50.5, 100.58)')
             else:
-                url = url + '&limit=' + str(settings.settings_search_dictionary.get('limit_value'))
+                url = url + '&limit=' + str(self.dataConfigurations.get_special_search_settings('limit_value'))
 
         return url
 
@@ -138,16 +135,16 @@ class Arbetsformedlingen:
 
         url = self.__generate_specific_search()
 
-        if settings.settings_dictionary.get('api_key').strip(' ') == '':
-            raise Exception('The api-key is missing in the settings.py file')
+        if ProgramConfigurations.program_settings.get('api_key').strip(' ') == '':
+            raise Exception('The api-key is missing in the TableSpecialSearch.py file')
 
-        headers = {'api-key': settings.settings_dictionary.get('api_key')}
+        headers = {'api-key': ProgramConfigurations.program_settings.get('api_key')}
 
         source_page = requests.get(url, headers=headers)
 
         if source_page.status_code == 200:
 
-            source_page.encoding = settings.settings_dictionary.get('encoding')
+            source_page.encoding = self.dataConfigurations.get_special_search_settings('encoding')
             results = json.loads(source_page.text).get('hits')
 
             if len(results) == 0:

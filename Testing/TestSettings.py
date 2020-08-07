@@ -1,7 +1,7 @@
 import unittest
 import os
-from Settings.settings import settings_search_dictionary
-from Settings.settings import settings_dictionary
+from Settings.SpecialSearchSettings import settings_search_dictionary
+from Settings.SpecialSearchSettings import settings_dictionary
 from Settings.save import SaveSettings
 
 

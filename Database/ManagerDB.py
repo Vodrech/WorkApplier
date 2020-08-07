@@ -1,7 +1,4 @@
-import Settings.settings as config
 from os import path
-import os
-
 
 """
 
@@ -15,8 +12,8 @@ class DB:
     print('Manager DB Imported')
 
     def __init__(self):
-        self.file_name = config.settings_dictionary.get('database_name')
-        self.pathway = config.settings_dictionary.get('main_folder') + config.settings_dictionary.get('db_folder')
+        self.file_name = 'WorkApplier'  # TODO: FIX
+        self.pathway = 'C:\\Temp' + '\\DB'  # TODO: FIX
         self.check_if_file_exist()
 
     # Checks if the database file exist
@@ -43,7 +40,7 @@ class DB:
                 return 1
             except NotADirectoryError:
                 raise NotADirectoryError('The Directory: ' + self.pathway + "couldn't be created..."
-                                                                      "Check so the settings.py is correctly setup")
+                                                                      "Check so the TableSpecialSearch.py is correctly setup")
                 return 0
 
         # Main Function
@@ -66,6 +63,6 @@ class DB:
             else:
                 return 1
 
-        # Creating directory that is given in the settings.py to store the database inside.
+        # Creating directory that is given in the TableSpecialSearch.py to store the database inside.
         else:
             return creating_directory_path()

@@ -2,7 +2,7 @@ import os
 
 """
 
-    The save.py handles the save functionality for the gui to save settings for the settings.py file
+    The save.py handles the save functionality for the gui to save settings for the TableSpecialSearch.py file
 
     Usage:
 
@@ -19,7 +19,7 @@ class SaveSettings:
     def __init__(self, object, value):
         self.object = object
         self.value = value
-        self.settingsPath = os.getcwd() + '\\Settings\\settings.py'
+        self.settingsPath = os.getcwd() + '\\Settings\\TableSpecialSearch.py'
 
     def read_settings_file(self):
 
@@ -57,29 +57,29 @@ class SaveSettings:
                         if type(self.value) == bool:
 
                             if self.value == True:
-                                newLine = ("    '" + self.object + "'" + ":" + " " + 'True' + ',\n')
+                                newLine = ("        '" + self.object + "'" + ":" + " " + 'True' + ',\n')
                             else:
-                                newLine = ("    '" + self.object + "'" + ":" + " " + 'False' + ',\n')
+                                newLine = ("        '" + self.object + "'" + ":" + " " + 'False' + ',\n')
 
                             content[position] = newLine
                             file.writelines(content)
 
                         elif type(self.value) == str:
                             if self.value.isdecimal():
-                                newLine = ("    '" + self.object + "'" + ":" + " " + self.value + ",\n")
+                                newLine = ("        '" + self.object + "'" + ":" + " " + self.value + ",\n")
                             else:
-                                newLine = ("    '" + self.object + "'" + ":" + " " + "'" + self.value + "'" + ",\n")
+                                newLine = ("        '" + self.object + "'" + ":" + " " + "'" + self.value + "'" + ",\n")
                             content[position] = newLine
                             file.writelines(content)
 
                         elif type(self.value) == int:
-                            newLine = ("    '" + self.object + "'" + ":" + " " + self.value + ',\n')
+                            newLine = ("        '" + self.object + "'" + ":" + " " + self.value + ',\n')
                             content[position] = newLine
                             file.writelines(content)
 
                         elif type(self.value) == list:
 
-                            newLine = ("    '" + self.object + "'" + ":" + " [")
+                            newLine = ("        '" + self.object + "'" + ":" + " [")
                             loopCount = 0
 
                             if len(self.value) != 0:    # TODO: FIXIIXIXIXIXIXIXIIX

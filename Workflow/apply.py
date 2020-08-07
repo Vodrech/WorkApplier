@@ -1,7 +1,7 @@
 from Applying.indeed import Indeed
 from Applying.arbetsformedlingen import Arbetsformedlingen
 from Database.ManagerSQLITE import SQL
-from Settings import settings
+from Settings.SpecialSearchSettings import Settings
 
 
 """
@@ -20,6 +20,7 @@ class ApplyingInterface:
         self.sql = SQL()    # Creates the SQL object so SQL injections can be made
         self.saved_jobs = self.sql.select_all()
         self.exists = True
+        self.dataConfigurations = Settings()
 
     @DeprecationWarning
     def apply_indeed(self):
@@ -56,7 +57,7 @@ class ApplyingInterface:
             > Creates new instance of Arbetsformedlingen class
             > Fetches all the data that is generated from that class, eg jobs
             > Fetches the stored data and compares to the newly fetch so no duplicates are being stored
-            > Checks the job description if it contains keywords that is given in the settings.py file
+            > Checks the job description if it contains keywords that is given in the TableSpecialSearch.py file
             > Fetches all the data that is necessary
             > Stores the data
 
@@ -82,15 +83,15 @@ class ApplyingInterface:
 
             return 0
 
-        # Nested Function, checks if the description contains any of keywords in the settings.py
+        # Nested Function, checks if the description contains any of keywords in the TableSpecialSearch.py
         def keywords_description(data):
 
             keyword_dict = {}
             text = data.get('description').get('text').lower()
-            boolVal = settings.settings_search_dictionary.get('keywords_active')
+            boolVal = self.dataConfigurations.get_special_search_settings('keywords_active')
 
             if boolVal == True:
-                keyword_list = settings.settings_search_dictionary.get('keywords_value')
+                keyword_list = self.dataConfigurations.get_special_search_settings('keywords_value')
 
                 for keyword in keyword_list:
                     if text.__contains__(keyword.lower()):
@@ -124,7 +125,7 @@ class ApplyingInterface:
                 raise Exception('Dict already has an element named "company"')
 
             keyword_dict = keywords_description(data)
-            keyword_list = settings.settings_search_dictionary.get('keywords_value')
+            keyword_list = self.dataConfigurations.get_special_search_settings('keywords_value')
             keywords_found = ""
             for keyword in keyword_list:
 

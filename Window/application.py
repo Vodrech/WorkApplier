@@ -8,11 +8,14 @@ import selenium
 import tkinter as tk
 import Workflow.apply as aply
 
+from Settings.SpecialSearchSettings import Settings
+from Settings.ProgramSettings import ProgramConfigurations
+
+import Database.Tables.TableSpecialSearch as specialSearch
 from importlib import reload
 from selenium import webdriver
 from Settings import save
 from tkinter import ttk
-from Settings import settings
 from Database import ManagerSQLITE
 import main
 
@@ -33,6 +36,8 @@ class Application(tk.Frame):
         self.master.maxsize(width=700, height=500)
         self.master.wm_iconbitmap('windowlogo.ico')
         self.title = self.master.title('WorkApplier')
+        
+        dataConfigurations = Settings()
 
         # Notebook
         tabControl = ttk.Notebook(self.master)
@@ -173,13 +178,13 @@ class Application(tk.Frame):
             ttk.Label(container, text='Base Directory Path', width=20).grid(row=1, column=0, sticky='W')
             base_dir_entry = ttk.Entry(container)
             base_dir_entry.grid(row=1, column=0, pady=2)
-            base_dir_entry.insert(0, settings.settings_dictionary.get('main_folder'))
+            base_dir_entry.insert(0, ProgramConfigurations.program_settings.get('main_folder'))
 
             # API-KEY Option
             ttk.Label(container, text='API-key', width=20).grid(row=2, column=0, sticky='W')
             api_key_entry = ttk.Entry(container)
             api_key_entry.grid(row=2, column=0)
-            api_key_entry.insert(0, settings.settings_dictionary.get('api_key'))
+            api_key_entry.insert(0, ProgramConfigurations.program_settings.get('api_key'))
 
             def program_settings():
 
@@ -209,8 +214,9 @@ class Application(tk.Frame):
             occupation_entry.grid(row=1, column=1, pady=2)
 
             # Occupation Enabled/Disabled
-            occupation_check.setvar('occupation_checkbox', settings.settings_search_dictionary.get('ssyk_active'))
-            occupation_entry.insert(0, settings.settings_search_dictionary.get('ssyk_value'))
+
+            occupation_check.setvar('occupation_checkbox', dataConfigurations.get_special_search_settings('ssyk_active'))
+            occupation_entry.insert(0, dataConfigurations.get_special_search_settings('ssyk_value'))
 
             def occupation_setting():
 
@@ -218,8 +224,8 @@ class Application(tk.Frame):
 
                 # Save Objects
                 dict_occupation = {
-                    'ssyk_active': val,
-                    'ssyk_value': occupation_entry.get().split(' ')
+                    'ssyk_active': int(val),
+                    'ssyk_value': occupation_entry.get()
                 }
 
                 return dict_occupation
@@ -238,11 +244,11 @@ class Application(tk.Frame):
             has_car_check.grid(row=4, column=1, ipadx=90)
 
             # Driving License Enabled/Disabled
-            driving_license_check.setvar('d_checkbox',settings.settings_search_dictionary.get('driving_license_active'))
-            license_type_entry.insert(0, settings.settings_search_dictionary.get('driving_license_value'))
+            driving_license_check.setvar('d_checkbox',dataConfigurations.get_special_search_settings('driving_license_active'))
+            license_type_entry.insert(0, dataConfigurations.get_special_search_settings('driving_license_value'))
 
             # Has own car Enabled/Disabled
-            has_car_check.setvar('car_checkbox', settings.settings_search_dictionary.get('driving_license_own_car'))
+            has_car_check.setvar('car_checkbox', dataConfigurations.get_special_search_settings('driving_license_own_car'))
 
             def driving_license_setting():
 
@@ -251,9 +257,9 @@ class Application(tk.Frame):
 
                 # Save Objects
                 dict_driving_license = {
-                    'driving_license_active': val,
+                    'driving_license_active': int(val),
                     'driving_license_value': str(license_type_entry.get()),
-                    'driving_license_own_car': val_two
+                    'driving_license_own_car': int(val_two)
                 }
 
                 return dict_driving_license
@@ -267,15 +273,15 @@ class Application(tk.Frame):
             reduce_check.grid(row=5, column=1, sticky='W', pady=5)
 
             # Reduce Enabled/Disabled
-            reduce_check.setvar('reduce_checkbox', settings.settings_search_dictionary.get('reduce_working_hours_active'))
-            reduce_entry.insert(0, settings.settings_search_dictionary.get('reduce_working_hours_value'))
+            reduce_check.setvar('reduce_checkbox', dataConfigurations.get_special_search_settings('reduce_working_hours_active'))
+            reduce_entry.insert(0, dataConfigurations.get_special_search_settings('reduce_working_hours_value'))
 
             def reduce_hours_setting():
 
                 val = check_button_checked(reduce_check.state())
 
                 dict_reduce_hours = {
-                    'reduce_working_hours_active': val,
+                    'reduce_working_hours_active': int(val),
                     'reduce_working_hours_value': reduce_entry.get()
                 }
 
@@ -290,8 +296,8 @@ class Application(tk.Frame):
             language_check.grid(row=6, column=1, sticky='W', pady=10)
 
             # Language Enabled/Disabled
-            language_check.setvar('language_checkbox', settings.settings_search_dictionary.get('language_active'))
-            language_entry.insert(0, settings.settings_search_dictionary.get('language_value'))
+            language_check.setvar('language_checkbox', dataConfigurations.get_special_search_settings('language_active'))
+            language_entry.insert(0, dataConfigurations.get_special_search_settings('language_value'))
 
             def language_setting():
 
@@ -300,8 +306,8 @@ class Application(tk.Frame):
                 # Save Objects
                 dict_language = {
 
-                    'language_active': val,
-                    'language_required': True,  # TODO: FIX MAYBE
+                    'language_active': int(val),
+                    'language_required': 1,  # TODO: FIX MAYBE
                     'language_value': str(language_entry.get())
 
                 }
@@ -328,18 +334,13 @@ class Application(tk.Frame):
             radius_entry.grid(row=10, column=1, pady=2)
 
             # Location Enabled/Disabled
-            location_check.setvar('location_checkbox', settings.settings_search_dictionary.get('radius_active'))
+            location_check.setvar('location_checkbox', dataConfigurations.get_special_search_settings('radius_active'))
 
-            if settings.settings_search_dictionary.get('radius_active'):
-                homePos = settings.settings_search_dictionary.get('radius_home').split(',')
+            if dataConfigurations.get_special_search_settings('radius_active'):
 
-                if len(homePos) <= 2:
-                    homeLat = homePos[0]
-                    homeLong = homePos[1]
-                    latitude_entry.insert(0, homeLat)
-                    longitude_entry.insert(0, homeLong)
-
-                radius_entry.insert(0, settings.settings_search_dictionary.get('radius_acceptable'))
+                latitude_entry.insert(0, dataConfigurations.get_special_search_settings('radius_home_lat'))
+                longitude_entry.insert(0, dataConfigurations.get_special_search_settings('radius_home_long'))
+                radius_entry.insert(0, dataConfigurations.get_special_search_settings('radius_acceptable'))
 
             def location_setting():
 
@@ -348,8 +349,9 @@ class Application(tk.Frame):
                 # Save Objects
                 dict_location = {
 
-                    'radius_active': val,
-                    'radius_home': (str(latitude_entry.get()) + ',' + str(longitude_entry.get())),
+                    'radius_active': int(val),
+                    'radius_home_lat': latitude_entry.get(),
+                    'radius_home_long': longitude_entry.get(),
                     'radius_acceptable': radius_entry.get()
 
                 }
@@ -365,11 +367,11 @@ class Application(tk.Frame):
             keywords_entry.grid(row=11, column=1)
 
             # Keywords Enabled/Disabled
-            keywords_check.setvar('keywords_checkbox', settings.settings_search_dictionary.get('keywords_active'))
-            if len(settings.settings_search_dictionary.get('keywords_value')) == 1:
+            keywords_check.setvar('keywords_checkbox', dataConfigurations.get_special_search_settings('keywords_active'))
+            if len(dataConfigurations.get_special_search_settings('keywords_value')) == 1:
                 keywords_entry.insert(0, '')
             else:
-                keywords_entry.insert(0, settings.settings_search_dictionary.get('keywords_value'))
+                keywords_entry.insert(0, dataConfigurations.get_special_search_settings('keywords_value'))
 
             def keywords_setting():
 
@@ -378,8 +380,8 @@ class Application(tk.Frame):
                 # Save Objects
                 dict_keywords = {
 
-                    'keywords_active': val,     # bool(keywords_check.getvar('keywords_checkbox'))
-                    'keywords_value':  keywords_entry.get().split(' ')
+                    'keywords_active': int(val),     # bool(keywords_check.getvar('keywords_checkbox'))
+                    'keywords_value':  keywords_entry.get()
 
                 }
 
@@ -394,8 +396,8 @@ class Application(tk.Frame):
             limit_entry.grid(row=12, column=1)
 
             # Limit Enabled/Disabled
-            limit_check.setvar('limit_checkbox', settings.settings_search_dictionary.get('limit_active'))
-            limit_entry.insert(0, settings.settings_search_dictionary.get('limit_value'))
+            limit_check.setvar('limit_checkbox', dataConfigurations.get_special_search_settings('limit_active'))
+            limit_entry.insert(0, dataConfigurations.get_special_search_settings('limit_value'))
 
             def amount_returned_setting():
 
@@ -404,7 +406,7 @@ class Application(tk.Frame):
                 # Save Objects
                 dict_limit = {
 
-                    'limit_active': val,
+                    'limit_active': int(val),
                     'limit_value': limit_entry.get()
 
                 }
@@ -416,17 +418,48 @@ class Application(tk.Frame):
                 dict_list = [program_settings(), occupation_setting(), reduce_hours_setting(), driving_license_setting(),
                              language_setting(), location_setting(), keywords_setting(), amount_returned_setting()]
 
-                # Loop trough each object
-                for d in dict_list:
+                s = specialSearch.SpecialSearch()
 
-                    for k in list(d.keys()):
-                        key = k
-                        value = d.get(k)
+                ssyk_active = occupation_setting().get('ssyk_active')
+                ssyk_value = occupation_setting().get('ssyk_value')
 
-                        save.SaveSettings(key, value).save_settings_file()
-                        print('Saved: ' + str(key) + ' with value of: ' + str(value))
+                d_l_a = driving_license_setting().get('driving_license_active')
+                d_l_v = driving_license_setting().get('driving_license_value')
+                d_l_o_c =driving_license_setting().get('driving_license_own_car')
 
-                reload(settings)
+                r_w_h_a = reduce_hours_setting().get('reduce_working_hours_active')
+                r_w_h_v = reduce_hours_setting().get('reduce_working_hours_value')
+
+                l_a = language_setting().get('language_active')
+                l_r = language_setting().get('language_required')
+                l_v = language_setting().get('language_value')
+
+                r_a = location_setting().get('radius_active')
+                r_h_l = location_setting().get('radius_home_lat')
+                r_h_lo = location_setting().get('radius_home_long')
+                r_ac = location_setting().get('radius_acceptable')
+
+                k_a = keywords_setting().get('keywords_active')
+                k_v = keywords_setting().get('keywords_value')
+
+                limit_a = amount_returned_setting().get('limit_active')
+                limit_v = amount_returned_setting().get('limit_value')
+
+                s.delete_settings()
+                s.save_settings(ssyk_active,ssyk_value,d_l_a,d_l_v,d_l_o_c,r_w_h_a,r_w_h_v,l_a,l_r,l_v,r_a,r_h_l,r_h_lo,r_ac,k_a,k_v,limit_a,limit_v)
+
+
+                # # Loop trough each object
+                # for d in dict_list:
+                #
+                #     for k in list(d.keys()):
+                #         key = k
+                #         value = d.get(k)
+                #
+                #         save.SaveSettings(key, value).save_settings_file()
+                #         print('Saved: ' + str(key) + ' with value of: ' + str(value))
+
+                # reload(SpecialSearchSettings)
 
             def check_button_checked(an_dictionary):
 
