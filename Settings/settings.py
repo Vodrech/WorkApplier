@@ -36,8 +36,8 @@ settings_dictionary = {
 settings_search_dictionary = {
 
     # Occupations, entered as a list (SSYK)
-    'ssyk_active': False,
-    'ssyk_value': '',
+    'ssyk_active': True,
+    'ssyk_value': [2514],
 
     # Driving license
     'driving_license_active': False,
@@ -60,11 +60,11 @@ settings_search_dictionary = {
     'radius_acceptable': '',
 
     # Description keywords searcher , If specific keywords in the job description
-    'keywords_active': False,
-    'keywords_value': [''],
+    'keywords_active': True,
+    'keywords_value': ['python', 'java'],
 
     # Number of jobs that the function is going to fetch, standard 10
-    'limit_active': False,
-    'limit_value': '',
+    'limit_active': True,
+    'limit_value': 30,
 
 }

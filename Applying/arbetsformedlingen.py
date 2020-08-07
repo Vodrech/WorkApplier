@@ -48,8 +48,8 @@ class Arbetsformedlingen:
                 while unAuthorizedCounter < 10:     # Tries 10 times to authorize
 
                     source_page = requests.get(url + str(value), headers=headers)
-                    unAuthorizedCounter+=1  # Fix (Before ++) Now ( += )
-                    time.sleep(1)                       # TODO: Takes to long time with sleep, fix
+                    unAuthorizedCounter+=1
+                    time.sleep(0.1)
 
                     if source_page.status_code is 200:  # TODO: Fix Exception Handling for status codes such as 401 or 501
 
@@ -107,7 +107,6 @@ class Arbetsformedlingen:
                 homeLat = homePos[0]
                 homeLong = homePos[1]
                 url = url + '&' + 'position=' + homeLat + '%2C' + homeLong
-
 
             else:
                 raise Exception('The "radius_active" were "True" but value were entered wrong. Example(59.434,18.242)')

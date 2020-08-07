@@ -98,7 +98,7 @@ class ApplyingInterface:
                     else:
                         keyword_dict[keyword] = False
 
-                return keyword_dict
+            return keyword_dict
 
         # Nested Function , gets all the necessary data to save to database
         def get_all_necessary_data(data):

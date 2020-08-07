@@ -8,11 +8,13 @@ import selenium
 import tkinter as tk
 import Workflow.apply as aply
 
+from importlib import reload
 from selenium import webdriver
 from Settings import save
 from tkinter import ttk
 from Settings import settings
 from Database import ManagerSQLITE
+import main
 
 
 class Application(tk.Frame):
@@ -29,6 +31,7 @@ class Application(tk.Frame):
 
         self.master.minsize(width=700, height=500)
         self.master.maxsize(width=700, height=500)
+        self.master.wm_iconbitmap('windowlogo.ico')
         self.title = self.master.title('WorkApplier')
 
         # Notebook
@@ -92,13 +95,14 @@ class Application(tk.Frame):
                 job_id = data[1]
 
                 sql.delete_data_two_job_id(job_id)
+                display_jobs()
 
             def delete_all_jobs():
 
                 sql.delete_data_two_all_jobs()
+                display_jobs()
 
             def apply():
-
                 selected_row = Tree.focus()
                 data = Tree.item(selected_row).get('values')
                 url = data[7]
@@ -120,13 +124,10 @@ class Application(tk.Frame):
             button_delete_all.pack(side='right')
 
             button_delete = ttk.Button(top_container, text='DELETE', width=10, command=delete_job)
-            button_delete.pack(side='right')
-
-            button_update = ttk.Button(top_container, text='UPDATE TABLE', width=20, command=display_jobs)
-            button_update.pack(side='right')
+            button_delete.pack(side='right', padx='10')
 
             button_apply = ttk.Button(top_container, text='APPLY', width=10, command=apply)
-            button_apply.pack(side='right')
+            button_apply.pack(side='left', padx='23')
 
             # Scrollbar
             scrollBarY = ttk.Scrollbar(containerScrollbarY, orient='vertical', command=Tree.yview)
@@ -173,7 +174,6 @@ class Application(tk.Frame):
             base_dir_entry = ttk.Entry(container)
             base_dir_entry.grid(row=1, column=0, pady=2)
             base_dir_entry.insert(0, settings.settings_dictionary.get('main_folder'))
-
 
             # API-KEY Option
             ttk.Label(container, text='API-key', width=20).grid(row=2, column=0, sticky='W')
@@ -366,7 +366,10 @@ class Application(tk.Frame):
 
             # Keywords Enabled/Disabled
             keywords_check.setvar('keywords_checkbox', settings.settings_search_dictionary.get('keywords_active'))
-            keywords_entry.insert(0, settings.settings_search_dictionary.get('keywords_value'))
+            if len(settings.settings_search_dictionary.get('keywords_value')) == 1:
+                keywords_entry.insert(0, '')
+            else:
+                keywords_entry.insert(0, settings.settings_search_dictionary.get('keywords_value'))
 
             def keywords_setting():
 
@@ -375,7 +378,7 @@ class Application(tk.Frame):
                 # Save Objects
                 dict_keywords = {
 
-                    'keywords_active': val, # bool(keywords_check.getvar('keywords_checkbox'))
+                    'keywords_active': val,     # bool(keywords_check.getvar('keywords_checkbox'))
                     'keywords_value':  keywords_entry.get().split(' ')
 
                 }
@@ -422,6 +425,8 @@ class Application(tk.Frame):
 
                         save.SaveSettings(key, value).save_settings_file()
                         print('Saved: ' + str(key) + ' with value of: ' + str(value))
+
+                reload(settings)
 
             def check_button_checked(an_dictionary):
 

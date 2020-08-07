@@ -19,7 +19,7 @@ class SaveSettings:
     def __init__(self, object, value):
         self.object = object
         self.value = value
-        self.settingsPath = os.path.dirname(os.path.realpath(__file__)) + '\\settings.py'
+        self.settingsPath = os.getcwd() + '\\Settings\\settings.py'
 
     def read_settings_file(self):
 
@@ -82,26 +82,30 @@ class SaveSettings:
                             newLine = ("    '" + self.object + "'" + ":" + " [")
                             loopCount = 0
 
-                            for x in self.value:
+                            if len(self.value) != 0:    # TODO: FIXIIXIXIXIXIXIXIIX
 
-                                loopCount += 1
+                                for x in self.value:
 
-                                if type(x) == int:
-                                    newLine += str(x)
-                                elif type(x) == str:
-                                    if x.isdecimal():
+                                    loopCount += 1
+
+                                    if type(x) == int:
                                         newLine += str(x)
+                                    elif type(x) == str:
+                                        if x.isdecimal():
+                                            newLine += str(x)
+                                        else:
+                                            newLine += "'" + x + "'"
                                     else:
-                                        newLine += "'" + x + "'"
-                                else:
-                                    Exception('Can not define the lists datatype, please check error log!')
+                                        Exception('Can not define the lists datatype, please check error log!')
 
-                                if loopCount != len(self.value):
-                                    newLine += ', '
+                                    if loopCount != len(self.value):
+                                        newLine += ', '
 
                             newLine += "]" + ',\n'
                             content[position] = newLine
                             file.writelines(content)
+                            return newLine
+
                         else:
                             raise Exception('Could not define correct datatype')
                     else:
