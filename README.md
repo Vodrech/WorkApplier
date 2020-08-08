@@ -72,6 +72,13 @@ Checkout more information about each module:
 
 > tkinter: https://docs.python.org/3/library/tk.html
 
+## Bugs & Fixes & Implementations
+> Currently we do not support mac users, and is currently on the development task list.
+
+> Wrong Datatype insertion, we are currently working on automated testing and exception handling to manage so called "bad usage" of the program.
+
+> Bugs can/cannot be seen by user, we are working on a solution to display error messages to the user.
+
 ## Release History
 
 ![Github Logo](https://github.com/Vodrech/WorkApplier/blob/master/logo.png?raw=true)
