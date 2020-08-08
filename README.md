@@ -4,7 +4,7 @@
 [![Python Version][python-version]][npm-url]
 [![NPM Version][npm-image]][npm-url]
 
-![Github Logo](https://github.com/Vodrech/WorkApplier/blob/master/logo.png?raw=true)
+![Project_Summary_Logo](https://github.com/Vodrech/WorkApplier/blob/master/projectDescription.png?raw=true)
 
 ## Usage example
 
@@ -53,6 +53,8 @@ Checkout more information about each module:
 > sqlite3: https://docs.python.org/2/library/sqlite3.html
 
 ## Release History
+
+![Github Logo](https://github.com/Vodrech/WorkApplier/blob/master/logo.png?raw=true)
 
 * 0.5
     * ADD: Applying functionality
