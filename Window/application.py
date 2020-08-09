@@ -7,6 +7,8 @@
 import selenium
 import tkinter as tk
 import Workflow.apply as aply
+import os
+import sys
 
 from Settings.SpecialSearchSettings import Settings
 from Settings.ProgramSettings import ProgramConfigurations
@@ -32,8 +34,8 @@ class Application(tk.Frame):
 
     def create_widgets(self):
 
-        self.master.minsize(width=700, height=500)
-        self.master.maxsize(width=700, height=500)
+        self.master.minsize(width=800, height=600)
+        self.master.maxsize(width=800, height=600)
         self.master.wm_iconbitmap('windowlogo.ico')
         self.title = self.master.title('WorkApplier')
         
@@ -44,6 +46,7 @@ class Application(tk.Frame):
 
         def create_main_tab():
 
+            chosen_driver = tk.IntVar()
             sql = ManagerSQLITE.SQL()
 
             main_tab = ttk.Frame(tabControl)
@@ -108,11 +111,40 @@ class Application(tk.Frame):
                 display_jobs()
 
             def apply():
+
                 selected_row = Tree.focus()
                 data = Tree.item(selected_row).get('values')
                 url = data[7]
-                driver = webdriver.Chrome('C:\\Users\\Vidar\\PycharmProjects\\WorkApplier\\Settings\\chromedriver.exe') # TODO: FIX Better solution
-                driver.get(url)
+
+                chrome_driver_url = ''
+                # safari_driver_url = ''
+                edge_driver_url = ''
+
+                SysIsWindows = True if sys.platform[0] == 'w' else False
+
+                if SysIsWindows is True:
+                    # System is windows
+                    base = os.getcwd().split('WorkApplier')[0] + 'WorkApplier\\Settings\\Webdrivers\\'
+                    chrome_driver_url = base + 'chromedriver.exe'
+                    edge_driver_url = base + 'explorer.exe'
+                else:
+                    # System is mac
+                    base = os.getcwd().split('WorkApplier')[0] + 'WorkApplier/Settings/Webdrivers/'
+                    chrome_driver_url = base + 'chromedriver'
+                    # safari_driver_url = base + 'safaridriver.exe'
+
+                if chosen_driver.get() == 1:
+                    # Chrome driver is selected
+                    driver = webdriver.Chrome(chrome_driver_url)
+                    driver.get(url)
+                elif chosen_driver.get() == 2:
+                    driver = webdriver.Safari()
+                    driver.get(url)
+                elif chosen_driver.get() == 3:
+                    driver = webdriver.Edge(edge_driver_url)
+                    driver.get(url)
+                else:
+                    raise Exception('No webdriver is selected to apply with!')
 
             def seek_jobs():
                 arbetsformedlningen = aply.ApplyingInterface()
@@ -133,6 +165,15 @@ class Application(tk.Frame):
 
             button_apply = ttk.Button(top_container, text='APPLY', width=10, command=apply)
             button_apply.pack(side='left', padx='23')
+
+            chrome_radio = ttk.Radiobutton(top_container, text='Chrome', variable=chosen_driver, value=1)
+            chrome_radio.pack(side='left')
+
+            safari_radio = ttk.Radiobutton(top_container, text='Safari', variable=chosen_driver, value=2)
+            safari_radio.pack(side='left')
+
+            edge_radio = ttk.Radiobutton(top_container, text='Edge', variable=chosen_driver, value=3)
+            edge_radio.pack(side='left')
 
             # Scrollbar
             scrollBarY = ttk.Scrollbar(containerScrollbarY, orient='vertical', command=Tree.yview)
