@@ -3,7 +3,7 @@ from Window import application
 import tkinter as tk
 
 # LoggingConfig
-from Log.Handlers import ApplyingHandler
+# from Log.Handlers import ApplyingHandler
 
 
 if __name__=='__main__':
