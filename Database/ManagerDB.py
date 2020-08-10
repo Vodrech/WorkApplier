@@ -1,10 +1,13 @@
 from os import path
 import os
+import sys
 """
 
 Handles the Database File
 
 """
+
+val = '\\DB' if sys.platform[0] == 'w' else '/DB'
 
 
 class DB:
@@ -13,7 +16,7 @@ class DB:
 
     def __init__(self):
         self.file_name = 'WorkApplier'  # TODO: FIX
-        self.pathway = 'C:\\Temp' + '\\DB'  # TODO: FIX
+        self.pathway = (os.getcwd().split('WorkApplier')[0] + 'WorkApplier' + val)
         self.check_if_file_exist()
 
     # Checks if the database file exist

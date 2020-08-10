@@ -101,6 +101,10 @@ class Arbetsformedlingen:
             else:
                 raise Exception('The "ssyk_active" were "True" but no occupation were given')
 
+        if self.dataConfigurations.get_special_search_settings('reduce_working_hours_active'):
+            percentage = self.dataConfigurations.get_special_search_settings('reduce_working_hours_value')
+            url = url + '&' + 'parttime.max=' + str(percentage)
+
         # Driving licence is enabled in TableSpecialSearch.py
         if self.dataConfigurations.get_special_search_settings('driving_license_active'):
             # B = VTK8_WRx_GcM
@@ -155,7 +159,7 @@ class Arbetsformedlingen:
             results = json.loads(source_page.text).get('hits')
 
             if len(results) == 0:
-                raise Exception('No Matches where found, please check so that the url were correct!')
+                raise Exception('No Matches where found, problems: search criteria to specific? Or development bug?')
 
             return results
 

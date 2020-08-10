@@ -60,7 +60,7 @@ class Application(tk.Frame):
             version.pack(padx=40, side='left')
 
             creator = ttk.Label(preview_tab, text = 'Made by: Vidar Zingmark', font=40)
-            creator.pack(padx=300, side='left')
+            creator.pack(side='bottom')
 
 
         def create_main_tab():
