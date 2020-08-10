@@ -56,6 +56,12 @@ class Application(tk.Frame):
             img.image = render
             img.pack()
 
+            version = ttk.Label(pre_container, text='Version 1.0', font=40)
+            version.pack(padx=40, side='left')
+
+            creator = ttk.Label(preview_tab, text = 'Made by: Vidar Zingmark', font=40)
+            creator.pack(padx=300, side='left')
+
 
         def create_main_tab():
 
@@ -140,7 +146,10 @@ class Application(tk.Frame):
                     # System is windows
                     base = os.getcwd().split('WorkApplier')[0] + 'WorkApplier\\Settings\\Webdrivers\\'
                     chrome_driver_url = base + 'windows_chromedriver.exe'
-                    edge_driver_url = base + 'windows_edgedriver.exe'
+                    if sys.platform == 'win32':
+                        edge_driver_url = base + 'windows_edgedriver32.exe'
+                    else:
+                        edge_driver_url = base + 'windows_edgedriver64.exe'
                 else:
                     # System is mac
                     base = os.getcwd().split('WorkApplier')[0] + 'WorkApplier/Settings/Webdrivers/'
@@ -202,9 +211,9 @@ class Application(tk.Frame):
             Tree.column('job_id', width=60)
             Tree.column('occupation', width=110)
             Tree.column('company_name', width=110)
-            Tree.column('keywords', width=110)
+            Tree.column('keywords', width=210)
             Tree.column('publication_date', width=110)
-            Tree.column('last_publication_date', width=140)
+            Tree.column('last_publication_date', width=130)
 
             Tree["show"] = "headings"
             Tree.heading("row", text="row")

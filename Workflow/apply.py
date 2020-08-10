@@ -91,7 +91,7 @@ class ApplyingInterface:
             boolVal = self.dataConfigurations.get_special_search_settings('keywords_active')
 
             if boolVal == True:
-                keyword_list = self.dataConfigurations.get_special_search_settings('keywords_value')
+                keyword_list = self.dataConfigurations.get_special_search_settings('keywords_value').split(' ')
 
                 for keyword in keyword_list:
                     if text.__contains__(keyword.lower()):
@@ -125,7 +125,7 @@ class ApplyingInterface:
                 raise Exception('Dict already has an element named "company"')
 
             keyword_dict = keywords_description(data)
-            keyword_list = self.dataConfigurations.get_special_search_settings('keywords_value')
+            keyword_list = self.dataConfigurations.get_special_search_settings('keywords_value').split(' ')
             keywords_found = ""
             for keyword in keyword_list:
 

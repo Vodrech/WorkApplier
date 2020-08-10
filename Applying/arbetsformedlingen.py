@@ -39,7 +39,7 @@ class Arbetsformedlingen:
         """
 
         url = self.base_taxonomy_url + 'ssyk-code-2012='    # Hardcoded cause only one object is needed, if more object is needed, make a more adaptive url
-        headers = {'api-key': self.dataConfigurations.get_special_search_settings('api_key')}
+        headers = {'api-key': ProgramConfigurations.program_settings.get('api_key')}
         occupation_roles = []
         unAuthorizedCounter = 0
 
@@ -52,12 +52,17 @@ class Arbetsformedlingen:
                     source_page = requests.get(url + str(value), headers=headers)
                     unAuthorizedCounter+=1
                     time.sleep(0.1)
-
-                    if source_page.status_code is 200:  # TODO: Fix Exception Handling for status codes such as 401 or 501
+                    status_code = source_page.status_code
+                    if source_page.status_code is 200:
 
                         id = json.loads(source_page.text)[0].get('taxonomy/id')
                         occupation_roles.append(id)
                         break
+
+                    if status_code is 401:
+                        raise Exception('Could not fetch taxonomy_object cause status_code were 401 (unauthorized)')
+                    elif status_code is 501:
+                        raise Exception('Could not fetch taxonomy_object cause status_code were 501 (Server Issue)')
 
         self.logger.info('Occupation_roles found:' + str(occupation_roles))
 
@@ -98,6 +103,7 @@ class Arbetsformedlingen:
 
         # Driving licence is enabled in TableSpecialSearch.py
         if self.dataConfigurations.get_special_search_settings('driving_license_active'):
+            # B = VTK8_WRx_GcM
 
             url = url + '&' + 'driving-license-required=true'
 

@@ -12,7 +12,7 @@ class ProgramConfigurations:
         'db_folder': val,                    # Database Folder
         'database_name': 'WorkApplier DB',  # Database Name
         'encoding': 'utf8',                     # Encoding for the return value after work available result
-        'api_key': 'Yid3PVx4YzhceGExXHgwNXpceGZhXHhjZFx4MThceGYwRlxuQCpceGQ0XHhjYVx4MTZqTlx4MTgn',
+        'api_key': 'YidceGY4XHhlMFx4ZjQiL2lceGI5XHhmYVx4ZTB7XHhjY1x4ZmFCXS5ceGIxXHhhM2ZWeCc',
 
         # Deprecated Settings
         'job_title_filter': ('',),  # Tuple , special search after title
