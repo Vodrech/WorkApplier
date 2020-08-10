@@ -14,12 +14,10 @@ from Settings.SpecialSearchSettings import Settings
 from Settings.ProgramSettings import ProgramConfigurations
 
 import Database.Tables.TableSpecialSearch as specialSearch
-from importlib import reload
 from selenium import webdriver
-from Settings import save
 from tkinter import ttk
+from PIL import Image, ImageTk
 from Database import ManagerSQLITE
-import main
 
 
 class Application(tk.Frame):
@@ -44,11 +42,27 @@ class Application(tk.Frame):
         # Notebook
         tabControl = ttk.Notebook(self.master)
 
+        def create_preview_tab():
+            preview_tab = ttk.Frame(tabControl)
+            tabControl.add(preview_tab, text='Preview')
+            tabControl.pack(expand=1, fill='both')
+
+            pre_container = ttk.Frame(tabControl, borderwidth=1)
+            pre_container.pack(pady='30')
+
+            load = Image.open('C:\\Users\\Vidar\\PycharmProjects\\WorkApplier\\logo.png')
+            render = ImageTk.PhotoImage(load)
+            img = tk.Label(pre_container, image=render)
+            img.image = render
+            img.pack()
+
+
         def create_main_tab():
 
             chosen_driver = tk.IntVar()
             sql = ManagerSQLITE.SQL()
 
+            # MAIN TAB
             main_tab = ttk.Frame(tabControl)
             tabControl.add(main_tab, text='Main')
             tabControl.pack(expand=1, fill="both")
@@ -125,12 +139,12 @@ class Application(tk.Frame):
                 if SysIsWindows is True:
                     # System is windows
                     base = os.getcwd().split('WorkApplier')[0] + 'WorkApplier\\Settings\\Webdrivers\\'
-                    chrome_driver_url = base + 'chromedriver.exe'
-                    edge_driver_url = base + 'explorer.exe'
+                    chrome_driver_url = base + 'windows_chromedriver.exe'
+                    edge_driver_url = base + 'windows_edgedriver.exe'
                 else:
                     # System is mac
                     base = os.getcwd().split('WorkApplier')[0] + 'WorkApplier/Settings/Webdrivers/'
-                    chrome_driver_url = base + 'chromedriver'
+                    chrome_driver_url = base + 'mac_chromedriver'
                     # safari_driver_url = base + 'safaridriver.exe'
 
                 if chosen_driver.get() == 1:
@@ -222,17 +236,17 @@ class Application(tk.Frame):
             base_dir_entry.insert(0, ProgramConfigurations.program_settings.get('main_folder'))
 
             # API-KEY Option
-            ttk.Label(container, text='API-key', width=20).grid(row=2, column=0, sticky='W')
-            api_key_entry = ttk.Entry(container)
-            api_key_entry.grid(row=2, column=0)
-            api_key_entry.insert(0, ProgramConfigurations.program_settings.get('api_key'))
+            # ttk.Label(container, text='API-key', width=20).grid(row=2, column=0, sticky='W')
+            # api_key_entry = ttk.Entry(container)
+            # api_key_entry.grid(row=2, column=0)
+            # api_key_entry.insert(0, ProgramConfigurations.program_settings.get('api_key'))
 
             def program_settings():
 
                 # Save Objects
                 objects = {
                     'main_folder': str(base_dir_entry.get()),
-                    'api_key': str(api_key_entry.get()),
+                    # 'api_key': str(api_key_entry.get()),
                 }
 
                 return objects
@@ -518,5 +532,6 @@ class Application(tk.Frame):
             save_button = ttk.Button(container, text='Save Settings', width=20, command=save_settings)
             save_button.grid(row=13, column=0, ipady=3, pady=235, ipadx=50, padx='50', sticky='W')
 
+        create_preview_tab()
         create_main_tab()
         create_settings_tab()

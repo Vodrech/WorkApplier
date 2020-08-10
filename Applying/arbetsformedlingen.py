@@ -98,7 +98,8 @@ class Arbetsformedlingen:
 
         # Driving licence is enabled in TableSpecialSearch.py
         if self.dataConfigurations.get_special_search_settings('driving_license_active'):
-            print('WOW')    # FIX
+
+            url = url + '&' + 'driving-license-required=true'
 
         # Specific position of workplace is enabled in TableSpecialSearch.py
         if self.dataConfigurations.get_special_search_settings('radius_active'):

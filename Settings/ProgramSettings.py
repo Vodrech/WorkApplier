@@ -1,17 +1,15 @@
-"""
-
-
-
-"""
+import os
+import sys
 
 
 class ProgramConfigurations:
 
+    val = '\\DB' if sys.platform[0] == 'w' else '/DB'
+
     program_settings = {
 
-        'main_folder': 'C:\Temp',
-        'db_folder': '\\DB',                    # Database Folder
-        'api_folder': '\\API',                  # API Folder
+        'main_folder': (os.getcwd().split('WorkApplier')[0] + 'WorkApplier'),
+        'db_folder': val,                    # Database Folder
         'database_name': 'WorkApplier DB',  # Database Name
         'encoding': 'utf8',                     # Encoding for the return value after work available result
         'api_key': 'Yid3PVx4YzhceGExXHgwNXpceGZhXHhjZFx4MThceGYwRlxuQCpceGQ0XHhjYVx4MTZqTlx4MTgn',
