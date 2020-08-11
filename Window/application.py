@@ -50,7 +50,7 @@ class Application(tk.Frame):
             pre_container = ttk.Frame(tabControl, borderwidth=1)
             pre_container.pack(pady='30')
 
-            load = Image.open('C:\\Users\\Vidar\\PycharmProjects\\WorkApplier\\logo.png')
+            load = Image.open('logo.png')
             render = ImageTk.PhotoImage(load)
             img = tk.Label(pre_container, image=render)
             img.image = render
