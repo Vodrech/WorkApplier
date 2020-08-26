@@ -9,7 +9,7 @@ import logging
 
 
 """
-
+    
     The Arbetsformlingen class manages all the main functionality for searching jobs at arbetsformedlningen.se
 
 """

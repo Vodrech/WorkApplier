@@ -4,7 +4,11 @@ import tkinter as tk
 
 # LoggingConfig
 # from Log.Handlers import ApplyingHandler
+"""
 
+    @author: Vidar Zingmark
+
+"""
 
 if __name__=='__main__':
 

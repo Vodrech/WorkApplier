@@ -2,7 +2,7 @@ from Applying.indeed import Indeed
 from Applying.arbetsformedlingen import Arbetsformedlingen
 from Database.ManagerSQLITE import SQL
 from Settings.SpecialSearchSettings import Settings
-
+from Database.Tables.TableAppliedJobs import AppliedJobs
 
 """
 
@@ -64,15 +64,21 @@ class ApplyingInterface:
         """
 
         AF = Arbetsformedlingen()
-
+        ap = AppliedJobs()
         fetched_data = AF.get_active_jobs()
         saved_data = self.sql.fetch_all_arbetsformedlingen()
+        applied_jobs = ap.check_existence()
 
         # Nested Function , Checks if the any job saved in the db has the same id
         def check_existence(data):
 
             if len(saved_data) == 0:
                 return 0
+
+            for a in applied_jobs:
+                i = int(data.get('id'))
+                if i == a[0]:
+                    return 1
 
             for s in saved_data:
 

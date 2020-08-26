@@ -14,6 +14,7 @@ from Settings.SpecialSearchSettings import Settings
 from Settings.ProgramSettings import ProgramConfigurations
 
 import Database.Tables.TableSpecialSearch as specialSearch
+from Database.Tables.TableAppliedJobs import AppliedJobs
 from selenium import webdriver
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -62,6 +63,65 @@ class Application(tk.Frame):
             creator = ttk.Label(preview_tab, text = 'Made by: Vidar Zingmark', font=40)
             creator.pack(side='bottom')
 
+        def create_applied_tab():
+
+            applied_tab = ttk.Frame(tabControl)
+            tabControl.add(applied_tab, text='Applied')
+            tabControl.pack(expand=1, fill='both')
+
+            containerApplied = tk.Frame(applied_tab, borderwidth=1, background='grey')
+            containerApplied.pack(fill='both', side='left')
+
+            TreeApplied = ttk.Treeview(containerApplied)
+            TreeApplied.pack(fill='both', side='left', expand=1)
+
+            # Scrollbar Y
+            scrollBarY = ttk.Scrollbar(applied_tab, orient='vertical', command=TreeApplied.yview)
+            scrollBarY.pack(fill='y', side='left')
+
+            TreeApplied.configure(yscrollcommand=scrollBarY.set)
+            TreeApplied["columns"] = ["row", "occupation", "company_name"]
+            TreeApplied.column('row', width=40)
+            TreeApplied.column('occupation', width=100)
+            TreeApplied.column('company_name')
+
+            TreeApplied["show"] = "headings"
+            TreeApplied.heading("row", text="row")
+            TreeApplied.heading("occupation", text="occupation")
+            TreeApplied.heading("company_name", text="company_name")
+
+            def display_jobs():
+
+                s = AppliedJobs()
+
+                jobs = s.fetch_applied_jobs()
+                index = iid = 1
+
+                if TreeApplied.exists(str(index)):
+
+                    pos = 1
+                    boolValue = True
+
+                    while boolValue:
+
+                        boolValue = TreeApplied.next(str(pos)) is not ""
+                        TreeApplied.delete(str(pos))
+                        pos += 1
+
+                for row in jobs:
+
+                    values = [index]
+                    for y in list(row):
+
+                        values.append(y)
+
+                    TreeApplied.insert("", iid, index, values=values)
+                    index = iid = index + 1
+
+            display_jobs()
+
+            button_UPDATE = ttk.Button(applied_tab, text='Update Table', width=10, command=display_jobs)
+            button_UPDATE.pack(side='top')
 
         def create_main_tab():
 
@@ -136,6 +196,9 @@ class Application(tk.Frame):
                 data = Tree.item(selected_row).get('values')
                 url = data[7]
 
+                ap = AppliedJobs()
+                ap.add_job_to_list(*data[1:])
+
                 chrome_driver_url = ''
                 # safari_driver_url = ''
                 edge_driver_url = ''
@@ -159,12 +222,19 @@ class Application(tk.Frame):
                 if chosen_driver.get() == 1:
                     # Chrome driver is selected
                     driver = webdriver.Chrome(chrome_driver_url)
+                    sql.delete_data_two_job_id(data[1])
+                    display_jobs()
                     driver.get(url)
+
                 elif chosen_driver.get() == 2:
                     driver = webdriver.Safari()
+                    sql.delete_data_two_job_id(data[1])
+                    display_jobs()
                     driver.get(url)
                 elif chosen_driver.get() == 3:
                     driver = webdriver.Edge(edge_driver_url)
+                    sql.delete_data_two_job_id(data[1])
+                    display_jobs()
                     driver.get(url)
                 else:
                     raise Exception('No webdriver is selected to apply with!')
@@ -542,5 +612,6 @@ class Application(tk.Frame):
             save_button.grid(row=13, column=0, ipady=3, pady=235, ipadx=50, padx='50', sticky='W')
 
         create_preview_tab()
+        create_applied_tab()
         create_main_tab()
         create_settings_tab()
