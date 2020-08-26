@@ -1,6 +1,7 @@
 import sqlite3 as sql
 from Database.ManagerDB import DB
 import datetime
+import sys
 
 """
 
@@ -9,6 +10,7 @@ import datetime
     
 """
 
+fileSeperators = fileSeperator = '\\' if sys.platform[0] == 'w' else '/'
 
 class SQL:
 
@@ -16,7 +18,7 @@ class SQL:
 
     def __init__(self):
         self.database = DB()
-        self.connection_string = self.database.pathway + '\\' + self.database.file_name + '.db'
+        self.connection_string = self.database.pathway + fileSeperator + self.database.file_name + '.db'
         self.table_existence = self.__create_table()
         self.arbetsformedlingen_existence = self.__create_arbetsformedlningen_table()
         self.delete_expired_jobs_data_two()

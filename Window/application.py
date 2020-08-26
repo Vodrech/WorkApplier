@@ -601,6 +601,8 @@ class Application(tk.Frame):
 
                     if an_dictionary[0] == 'selected':
                         val = True
+                    else:
+                        val = False
 
                 else:
                     val = False

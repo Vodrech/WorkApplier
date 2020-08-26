@@ -8,6 +8,7 @@ Handles the Database File
 """
 
 val = '\\DB' if sys.platform[0] == 'w' else '/DB'
+fileSeperator = '\\' if sys.platform[0] == 'w' else '/'
 
 
 class DB:
@@ -26,7 +27,7 @@ class DB:
         def creating_database_file():
 
             try:
-                open(self.pathway + '\\' + self.file_name + '.db', 'w+')
+                open(self.pathway + fileSeperator + self.file_name + '.db', 'w+')
                 return 1
 
             except FileExistsError:
@@ -49,7 +50,7 @@ class DB:
         # Main Function
         if path.isdir(self.pathway):
 
-            if not path.exists(self.pathway + '\\' + self.file_name + '.db'):  # Creates file if does not exist.
+            if not path.exists(self.pathway + fileSeperator + self.file_name + '.db'):  # Creates file if does not exist.
 
                 def creating_database_file():
 
